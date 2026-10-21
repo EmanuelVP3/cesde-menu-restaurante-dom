@@ -60,22 +60,21 @@ git push -u origin trabajo/estructura-estilos
 
 Los nombres «Compañero 1–4» son espacios de asignación: anoten sus nombres en el prompt antes de empezar.
 
-## Publicar en GitHub
+## Repositorio en GitHub
 
-La llave universitaria fue verificada con la cuenta **EmanuelVP3**. SSH permite subir código; crear un repositorio requiere una sesión web o API. No confundir la carpeta y ramas locales con un repositorio remoto ya creado.
+[cesde-menu-restaurante-dom](https://github.com/EmanuelVP3/cesde-menu-restaurante-dom)
 
-Si el repositorio aún no existe, iniciar sesión en GitHub como EmanuelVP3 y crear `cesde-menu-restaurante-dom`, preferiblemente privado mientras trabajan. No inicializarlo con README, licencia ni .gitignore: estos ya están en la carpeta local. Invitar a los otros tres integrantes desde Settings → Collaborators con sus usuarios reales (pendientes de proporcionar).
+Para descargar el proyecto y comenzar desde la rama de integración:
 
-Desde esta carpeta, después de crear el repositorio vacío:
-
-```powershell
-git config core.sshCommand 'ssh -i C:/Users/evasquez/.ssh/id_ed25519_u -o IdentitiesOnly=yes'
-git remote add origin git@github.com:EmanuelVP3/cesde-menu-restaurante-dom.git
-git push -u origin main develop trabajo/estructura-estilos trabajo/crud-platos trabajo/pedidos-integracion trabajo/pruebas-presentacion
+```sh
+git clone https://github.com/EmanuelVP3/cesde-menu-restaurante-dom.git
+cd cesde-menu-restaurante-dom
+git switch develop
 ```
 
-Si `origin` ya existe, comprobar `git remote -v` antes de cambiarlo. La ruta de la llave es local a Emanuel: los compañeros usan sus propias credenciales y nunca copian llaves privadas al proyecto.
+Luego cambiar a la rama asignada en la tabla de responsabilidades. Si el repositorio es privado, los integrantes deben estar invitados como colaboradores.
 
 ## Entrega
 
 Carpeta con `index.html`, `style.css`, `script.js`, presentación de siete diapositivas y evidencias reales de uso de IA. Todos deben explicar el código con sus palabras y demostrar primera fila, última fila y lista vacía sin errores en consola. No agregar backend, frameworks, autenticación, pagos ni persistencia a este ejercicio.
+
