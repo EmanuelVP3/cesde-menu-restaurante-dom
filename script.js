@@ -2,7 +2,6 @@
 
 // REGIÓN COMPAÑERO 2: validación compartida y CRUD.
 let menuData = [];
-let pedidoData = [];
 
 const menuApp = document.getElementById('menu-app');
 const formPlato = document.getElementById('form-plato');
@@ -46,17 +45,20 @@ function validarPrecioCentavos(valor) {
     return { valido: false, valor: 0, mensaje: 'El precio es obligatorio.' };
   }
 
-  const numero = Number(texto);
+  const partes = texto.match(/^(?:\d+(?:\.\d{0,2})?|\.\d{1,2})$/);
+  if (!partes) {
+    return { valido: false, valor: 0, mensaje: 'Ingresa un precio positivo con máximo dos decimales.' };
+  }
 
-  if (!Number.isFinite(numero) || numero <= 0) {
+  const [unidadesTexto, decimalesTexto = ''] = texto.split('.');
+  const unidades = Number(unidadesTexto || 0);
+  const centavos = unidades * 100 + Number((decimalesTexto + '00').slice(0, 2));
+
+  if (!Number.isSafeInteger(centavos) || centavos <= 0) {
     return { valido: false, valor: 0, mensaje: 'El precio debe ser un número mayor que cero.' };
   }
 
-  if (!Number.isInteger(numero * 100)) {
-    return { valido: false, valor: 0, mensaje: 'El precio admite máximo dos decimales.' };
-  }
-
-  return { valido: true, valor: Math.round(numero * 100), mensaje: '' };
+  return { valido: true, valor: centavos, mensaje: '' };
 }
 
 function crearAcciones(tarjeta, modo) {
@@ -160,6 +162,7 @@ function iniciarEdicion(tarjeta) {
   const nombreInputEdicion = document.createElement('input');
   nombreInputEdicion.type = 'text';
   nombreInputEdicion.className = 'plato__editar-nombre';
+  nombreInputEdicion.setAttribute('aria-label', 'Nombre del plato en edición');
   nombreInputEdicion.value = nombreActual.textContent.trim();
 
   const precioInputEdicion = document.createElement('input');
@@ -167,6 +170,7 @@ function iniciarEdicion(tarjeta) {
   precioInputEdicion.min = '0.01';
   precioInputEdicion.step = '0.01';
   precioInputEdicion.className = 'plato__editar-precio';
+  precioInputEdicion.setAttribute('aria-label', 'Precio del plato en edición, en pesos colombianos');
   precioInputEdicion.value = (Number(precioActual.dataset.precioCentavos || 0) / 100).toFixed(2);
 
   nombreActual.replaceWith(nombreInputEdicion);
@@ -272,8 +276,14 @@ function eliminarPlato(tarjeta) {
   return true;
 }
 
+// REGIÓN COMPAÑERO 3: pedido, único listener delegado y arranque.
 function agregarAlPedido(tarjeta) {
   if (!(tarjeta instanceof Element)) {
+    return null;
+  }
+
+  if (!listaPedido) {
+    mostrarMensaje('No se pudo acceder a la lista del pedido.');
     return null;
   }
 
@@ -281,25 +291,20 @@ function agregarAlPedido(tarjeta) {
   const precioVisible = tarjeta.querySelector('.plato__precio');
 
   if (!nombreVisible || !precioVisible) {
+    mostrarMensaje('No se pudo agregar el plato porque faltan datos válidos.');
     return null;
   }
 
   const nombre = nombreVisible.textContent.trim();
   const precioCentavos = Number(precioVisible.dataset.precioCentavos || 0);
 
-  if (!validarNombre(nombre) || !Number.isFinite(precioCentavos) || precioCentavos <= 0) {
+  if (!validarNombre(nombre) || !Number.isSafeInteger(precioCentavos) || precioCentavos <= 0) {
     mostrarMensaje('No se pudo agregar el plato porque faltan datos válidos.');
     return null;
   }
 
   const linea = document.createElement('li');
   linea.textContent = `${nombre} — ${formatearPrecio(precioCentavos)}`;
-
-  pedidoData.push({
-    id: generarId(),
-    nombre,
-    precioCentavos,
-  });
 
   listaPedido.append(linea);
   mostrarMensaje(`Se agregó "${nombre}" al pedido.`);
@@ -308,27 +313,49 @@ function agregarAlPedido(tarjeta) {
 
 function inicializarApp() {
   if (!menuApp || !formPlato || !listaPlatos || !listaPedido) {
-    return;
+    throw new Error('No se pudo inicializar la aplicación: faltan elementos requeridos del menú.');
   }
 
   if (menuApp.dataset.inicializado === 'true') {
     return;
   }
 
+  const botonSubmit = formPlato.querySelector('button[type="submit"]');
+  if (!botonSubmit) {
+    throw new Error('No se pudo inicializar la aplicación: falta el botón para agregar platos.');
+  }
+
   menuApp.dataset.inicializado = 'true';
+  botonSubmit.disabled = false;
+
+  const estadoDesarrollo = document.getElementById('estado-desarrollo');
+  if (estadoDesarrollo) {
+    estadoDesarrollo.remove();
+  }
+
+  const descripcionesFormulario = (formPlato.getAttribute('aria-describedby') || '')
+    .split(/\s+/)
+    .filter((id) => id && id !== 'estado-desarrollo');
+  if (descripcionesFormulario.length) {
+    formPlato.setAttribute('aria-describedby', descripcionesFormulario.join(' '));
+  } else {
+    formPlato.removeAttribute('aria-describedby');
+  }
 
   menuApp.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) {
       return;
     }
 
+    // La delegación resuelve el botón desde el elemento exacto que recibió el clic.
     const boton = event.target.closest('button[data-action]');
     if (!boton || !menuApp.contains(boton)) {
       return;
     }
 
+    // closest sube del botón a su tarjeta; se rechazan tarjetas fuera del menú.
     const tarjeta = boton.closest('.plato');
-    if (!tarjeta) {
+    if (!tarjeta || !listaPlatos.contains(tarjeta)) {
       return;
     }
 
@@ -376,10 +403,17 @@ function inicializarApp() {
       return;
     }
 
-    crearPlato(nombre, validacionPrecio.valor);
-    formPlato.reset();
+    const tarjetaCreada = crearPlato(nombre, validacionPrecio.valor);
+    if (
+      tarjetaCreada instanceof Element
+      && tarjetaCreada.matches('.plato[data-id]')
+      && listaPlatos.contains(tarjetaCreada)
+    ) {
+      formPlato.reset();
+    } else {
+      mostrarMensaje('No se pudo agregar el plato. Verifica los datos e inténtalo de nuevo.');
+    }
   });
 }
 
-// REGIÓN COMPAÑERO 3: pedido, único listener delegado y arranque.
 inicializarApp();

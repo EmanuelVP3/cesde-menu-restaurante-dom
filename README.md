@@ -4,14 +4,14 @@ Proyecto 2 de Front I, CESDE–Comfama. Base de trabajo para cuatro estudiantes:
 
 ## Estado
 
-Repositorio de preparación: contiene el plan compartido y archivos iniciales; **el CRUD y el pedido todavía deben implementarse**. No se han ejecutado pruebas funcionales ni recogido evidencias. La guía original contempla equipos de dos o tres; este reparto se adapta a cuatro por solicitud del equipo. Confirmen con el docente esa adaptación.
+La versión actual incluye el CRUD de platos, la lista de pedido y la integración de eventos. **Las pruebas funcionales manuales y las evidencias siguen pendientes**; no se consideran aprobadas hasta ejecutarlas y registrarlas. La guía original contempla equipos de dos o tres; este reparto se adapta a cuatro por solicitud del equipo. Confirmen con el docente esa adaptación.
 
 ## Empezar
 
 1. Leer [PROMPT_GENERAL.md](PROMPT_GENERAL.md), incluido el contrato de integración.
 2. Cada integrante copia el prompt general y el prompt de su parte en su IA, e indica su nombre y la etapa que realizará.
 3. Abrir `index.html` en un navegador. No requiere instalación, servidor ni dependencias.
-4. Implementar por etapas y completar [las pruebas](docs/PRUEBAS.md), [la evidencia de IA](docs/EVIDENCIA_IA.md) y [la presentación](docs/PRESENTACION.md).
+4. Probar la aplicación y completar [las pruebas](docs/PRUEBAS.md), [la evidencia de IA](docs/EVIDENCIA_IA.md) y [la presentación](docs/PRESENTACION.md).
 
 ## Estructura
 
@@ -77,4 +77,3 @@ Luego cambiar a la rama asignada en la tabla de responsabilidades. Si el reposit
 ## Entrega
 
 Carpeta con `index.html`, `style.css`, `script.js`, presentación de siete diapositivas y evidencias reales de uso de IA. Todos deben explicar el código con sus palabras y demostrar primera fila, última fila y lista vacía sin errores en consola. No agregar backend, frameworks, autenticación, pagos ni persistencia a este ejercicio.
-

@@ -1,6 +1,6 @@
 # Pruebas manuales — Proyecto 2: Menú de restaurante
 
-Estado inicial: **pendiente de ejecución**. Esta lista no certifica que el proyecto ya funcione. Cada compañero debe registrar el resultado real después de integrar `index.html`, `style.css` y `script.js`.
+Estado de la matriz: **pendiente de ejecución completa**. Se registra abajo una verificación acotada de integración en navegador; no certifica los casos que no se ejecutaron ni sustituye la revisión del equipo.
 
 ## Preparación
 
@@ -52,6 +52,6 @@ Marcar `[x]` solo después de probar. Registrar fecha, responsable y observació
 
 | Fecha | Responsable | Caso | Resultado: pasó / falló / pendiente | Evidencia y corrección |
 |---|---|---|---|---|
-| Por completar | Por completar | Por completar | Pendiente | Por completar |
+| 2026-10-20 | Asistente de IA (sesión local) | Smoke test parcial: alta, validación de precios, edición, pedido, eliminación, delegación e inicialización repetida | Pasó en los casos ejecutados; matriz completa pendiente | Navegador local integrado; consola y errores de página sin errores. Verificados 0.29, 1.10 y precios inválidos/vacíos/fuera de rango; submit válido reinicia campos y `crearPlato()` nulo los conserva; edición inválida se descarta al cancelar; pedidos no cambian al editar/eliminar; primera/última tarjeta, lista vacía, clic anidado e inicialización repetida. No se guardó captura. |
 
 No escribir “todo pasó” sin ejecutar los casos. Si cambió el código después de una corrección, repetir los casos afectados.
