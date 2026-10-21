@@ -1,0 +1,25 @@
+# Archivos del sistema y del editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.tmp
+*.log
+
+# Credenciales y archivos privados
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_ed25519*
+id_rsa*
+
+# No se usan dependencias ni compilación en este proyecto
+node_modules/
+dist/
+coverage/
+
+# Conservar las capturas reales y la presentación en docs/
