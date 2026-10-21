@@ -42,11 +42,11 @@ La diapositiva final debe mostrar el código que efectivamente quedó integrado.
 
 | Concepto | Archivo y línea real | Explicación propia |
 |---|---|---|
-| Delegación: un listener de clic en el contenedor | `script.js:345` | Un único listener atiende las acciones de las tarjetas creadas ahora o después. |
-| Encontrar el botón incluso al pulsar su hijo | `script.js:351` | `closest` localiza el botón desde el elemento que recibió el clic. |
-| Subir a la tarjeta con `closest('.plato')` | `script.js:357` | La acción queda limitada a la tarjeta del botón pulsado. |
-| Buscar nombre y precio dentro de la tarjeta con `querySelector` | `script.js:290-291` | Las búsquedas parten de la tarjeta, no del documento completo. |
-| Mostrar texto del usuario con `textContent` | `script.js:125` | El nombre se trata como texto, no como HTML. |
+| Delegación: un listener de clic en el contenedor | `script.js:370` | Un único listener atiende las acciones de las tarjetas creadas ahora o después. |
+| Encontrar el botón incluso al pulsar su hijo | `script.js:376` | `closest` localiza el botón desde el elemento que recibió el clic. |
+| Subir a la tarjeta con `closest('.plato')` | `script.js:382` | La acción queda limitada a la tarjeta del botón pulsado. |
+| Buscar nombre y precio dentro de la tarjeta con `querySelector` | `script.js:310-311` | Las búsquedas parten de la tarjeta, no del documento completo. |
+| Mostrar texto del usuario con `textContent` | `script.js:138` | El nombre se trata como texto, no como HTML. |
 
 ## 5. Recorrido de la demo
 

@@ -55,3 +55,9 @@ Marcar `[x]` solo después de probar. Registrar fecha, responsable y observació
 | 2026-10-20 | Asistente de IA (sesión local) | Smoke test parcial: alta, validación de precios, edición, pedido, eliminación, delegación e inicialización repetida | Pasó en los casos ejecutados; matriz completa pendiente | Navegador local integrado; consola y errores de página sin errores. Verificados 0.29, 1.10 y precios inválidos/vacíos/fuera de rango; submit válido reinicia campos y `crearPlato()` nulo los conserva; edición inválida se descarta al cancelar; pedidos no cambian al editar/eliminar; primera/última tarjeta, lista vacía, clic anidado e inicialización repetida. No se guardó captura. |
 
 No escribir “todo pasó” sin ejecutar los casos. Si cambió el código después de una corrección, repetir los casos afectados.
+
+## Revisión adicional del 20 de octubre de 2026
+
+Ver [reporte técnico](evidencias/revision-tecnica.json): pasaron 10/10 casos de validación de precios ejecutados con Node y todas las referencias getElementById corresponden al HTML. Se revisó un listener click delegado y uno submit. Estas comprobaciones no equivalen a ejecutar el DOM en un navegador.
+
+El registro anterior de smoke test en navegador se conserva como **reporte de la contribución del compañero**, sin captura adjunta y no reproducido en esta sesión. La matriz manual completa continúa pendiente de ejecución por el equipo.

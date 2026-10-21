@@ -77,3 +77,7 @@ Luego cambiar a la rama asignada en la tabla de responsabilidades. Si el reposit
 ## Entrega
 
 Carpeta con `index.html`, `style.css`, `script.js`, presentación de siete diapositivas y evidencias reales de uso de IA. Todos deben explicar el código con sus palabras y demostrar primera fila, última fila y lista vacía sin errores en consola. No agregar backend, frameworks, autenticación, pagos ni persistencia a este ejercicio.
+
+## Actualizar y preparar la exposición
+
+Ver [cómo actualizar la copia local](docs/ACTUALIZAR_REPOSITORIO.md), [evidencias disponibles](docs/evidencias/README.md) y [guía para explicar el código](docs/EXPLICAR_CODIGO.md).

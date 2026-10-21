@@ -1,8 +1,10 @@
 'use strict';
 
 // REGIÓN COMPAÑERO 2: validación compartida y CRUD.
+// Estado del menú: guarda los datos originales para editar y cancelar sin perderlos.
 let menuData = [];
 
+// Buscamos una vez los contenedores estables. Después recorremos cada tarjeta desde su botón.
 const menuApp = document.getElementById('menu-app');
 const formPlato = document.getElementById('form-plato');
 const nombreInput = document.getElementById('nombre-plato');
@@ -11,15 +13,18 @@ const listaPlatos = document.getElementById('lista-platos');
 const listaPedido = document.getElementById('lista-pedido');
 const mensajeEl = document.getElementById('mensaje');
 
+// aria-live en el HTML permite anunciar este texto a lectores de pantalla.
 function mostrarMensaje(texto) {
   if (!mensajeEl) return;
   mensajeEl.textContent = texto;
 }
 
+// Cada tarjeta recibe una identidad propia, incluso si dos platos tienen el mismo nombre.
 function generarId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+// El valor interno está en centavos; dividimos por 100 solo para mostrar pesos colombianos.
 function formatearPrecio(precioCentavos) {
   if (!Number.isFinite(precioCentavos)) {
     return '$0,00';
@@ -33,11 +38,13 @@ function formatearPrecio(precioCentavos) {
   }).format(precioCentavos / 100);
 }
 
+// trim elimina espacios en los extremos: un nombre de solo espacios no es válido.
 function validarNombre(nombre) {
   const texto = typeof nombre === 'string' ? nombre.trim() : '';
   return texto.length > 0;
 }
 
+// Validamos el texto antes de convertirlo: así 0.29 y 1.10 no fallan por precisión decimal.
 function validarPrecioCentavos(valor) {
   const texto = typeof valor === 'string' ? valor.trim() : String(valor ?? '').trim();
 
@@ -45,15 +52,18 @@ function validarPrecioCentavos(valor) {
     return { valido: false, valor: 0, mensaje: 'El precio es obligatorio.' };
   }
 
+  // La expresión permite un importe decimal positivo con un máximo de dos cifras decimales.
   const partes = texto.match(/^(?:\d+(?:\.\d{0,2})?|\.\d{1,2})$/);
   if (!partes) {
     return { valido: false, valor: 0, mensaje: 'Ingresa un precio positivo con máximo dos decimales.' };
   }
 
+  // Separar pesos y decimales evita comprobar decimales con numero * 100.
   const [unidadesTexto, decimalesTexto = ''] = texto.split('.');
   const unidades = Number(unidadesTexto || 0);
   const centavos = unidades * 100 + Number((decimalesTexto + '00').slice(0, 2));
 
+  // Un entero seguro se puede representar sin perder precisión en JavaScript.
   if (!Number.isSafeInteger(centavos) || centavos <= 0) {
     return { valido: false, valor: 0, mensaje: 'El precio debe ser un número mayor que cero.' };
   }
@@ -61,6 +71,7 @@ function validarPrecioCentavos(valor) {
   return { valido: true, valor: centavos, mensaje: '' };
 }
 
+// Construimos botones sin listeners propios: el contenedor atenderá todos sus clics.
 function crearAcciones(tarjeta, modo) {
   const contenedor = tarjeta.querySelector('.plato__acciones');
   const acciones = contenedor || document.createElement('div');
@@ -106,6 +117,7 @@ function crearAcciones(tarjeta, modo) {
   return acciones;
 }
 
+// CREATE y READ: creamos una tarjeta, la mostramos y guardamos sus datos en el estado.
 function crearPlato(nombre, precioCentavos) {
   if (!listaPlatos || !Number.isInteger(precioCentavos) || precioCentavos <= 0) {
     return null;
@@ -122,10 +134,12 @@ function crearPlato(nombre, precioCentavos) {
 
   const nombreVisible = document.createElement('p');
   nombreVisible.className = 'plato__nombre';
+  // textContent muestra el nombre literalmente; no interpreta etiquetas escritas por el usuario.
   nombreVisible.textContent = nombreSeguro;
 
   const precioVisible = document.createElement('span');
   precioVisible.className = 'plato__precio';
+  // dataset conserva el precio numérico: no necesitamos extraerlo del texto con símbolo de moneda.
   precioVisible.dataset.precioCentavos = String(precioCentavos);
   precioVisible.textContent = formatearPrecio(precioCentavos);
 
@@ -143,6 +157,7 @@ function crearPlato(nombre, precioCentavos) {
   return tarjeta;
 }
 
+// UPDATE, paso 1: buscamos dentro de esta tarjeta y sustituimos sus textos por campos editables.
 function iniciarEdicion(tarjeta) {
   if (!(tarjeta instanceof Element)) {
     return false;
@@ -152,6 +167,7 @@ function iniciarEdicion(tarjeta) {
     return false;
   }
 
+  // Bajar en el DOM: querySelector parte de la tarjeta recibida y no busca en los otros platos.
   const nombreActual = tarjeta.querySelector('.plato__nombre');
   const precioActual = tarjeta.querySelector('.plato__precio');
 
@@ -185,6 +201,7 @@ function iniciarEdicion(tarjeta) {
   return true;
 }
 
+// UPDATE, paso 2: solo actualizamos el estado y la tarjeta cuando todos los datos son válidos.
 function guardarEdicion(tarjeta) {
   if (!(tarjeta instanceof Element)) {
     return false;
@@ -234,6 +251,7 @@ function guardarEdicion(tarjeta) {
   return true;
 }
 
+// Cancelar recupera el estado original: escribir en el input todavía no había cambiado menuData.
 function cancelarEdicion(tarjeta) {
   if (!(tarjeta instanceof Element)) {
     return false;
@@ -264,6 +282,7 @@ function cancelarEdicion(tarjeta) {
   return true;
 }
 
+// DELETE: quitamos del estado el ID elegido y del DOM únicamente su tarjeta.
 function eliminarPlato(tarjeta) {
   if (!(tarjeta instanceof Element)) {
     return false;
@@ -277,6 +296,7 @@ function eliminarPlato(tarjeta) {
 }
 
 // REGIÓN COMPAÑERO 3: pedido, único listener delegado y arranque.
+// Acción del proyecto 2: una línea de pedido es una copia, no una referencia al plato editable.
 function agregarAlPedido(tarjeta) {
   if (!(tarjeta instanceof Element)) {
     return null;
@@ -303,6 +323,7 @@ function agregarAlPedido(tarjeta) {
     return null;
   }
 
+  // Cada clic crea un nodo nuevo: pedir dos veces produce dos líneas independientes.
   const linea = document.createElement('li');
   linea.textContent = `${nombre} — ${formatearPrecio(precioCentavos)}`;
 
@@ -311,11 +332,13 @@ function agregarAlPedido(tarjeta) {
   return linea;
 }
 
+// El arranque conecta formulario y acciones una sola vez, cuando el DOM ya existe gracias a defer.
 function inicializarApp() {
   if (!menuApp || !formPlato || !listaPlatos || !listaPedido) {
     throw new Error('No se pudo inicializar la aplicación: faltan elementos requeridos del menú.');
   }
 
+  // Esta bandera evita duplicar eventos si alguien vuelve a llamar a inicializarApp.
   if (menuApp.dataset.inicializado === 'true') {
     return;
   }
@@ -326,6 +349,7 @@ function inicializarApp() {
   }
 
   menuApp.dataset.inicializado = 'true';
+  // Habilitamos Agregar solo después de comprobar que existen los elementos requeridos.
   botonSubmit.disabled = false;
 
   const estadoDesarrollo = document.getElementById('estado-desarrollo');
@@ -342,6 +366,7 @@ function inicializarApp() {
     formPlato.removeAttribute('aria-describedby');
   }
 
+  // DELEGACIÓN: el clic de un botón asciende hasta este contenedor, incluso en tarjetas nuevas.
   menuApp.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) {
       return;
@@ -359,6 +384,7 @@ function inicializarApp() {
       return;
     }
 
+    // data-action decide la operación; todas reciben la tarjeta del botón pulsado.
     switch (boton.dataset.action) {
       case 'editar':
         iniciarEdicion(tarjeta);
@@ -380,7 +406,9 @@ function inicializarApp() {
     }
   });
 
+  // Submit es independiente del clic delegado: también permite agregar usando Enter.
   formPlato.addEventListener('submit', (event) => {
+    // Evitamos que el formulario recargue la página y borre el menú que está en memoria.
     event.preventDefault();
 
     if (!nombreInput || !precioInput) {
@@ -409,6 +437,7 @@ function inicializarApp() {
       && tarjetaCreada.matches('.plato[data-id]')
       && listaPlatos.contains(tarjetaCreada)
     ) {
+      // Limpiar solo después del éxito permite corregir los datos si la creación falla.
       formPlato.reset();
     } else {
       mostrarMensaje('No se pudo agregar el plato. Verifica los datos e inténtalo de nuevo.');
@@ -416,4 +445,5 @@ function inicializarApp() {
   });
 }
 
+// Comenzamos una vez; el atributo defer del script asegura que el HTML ya se haya leído.
 inicializarApp();
