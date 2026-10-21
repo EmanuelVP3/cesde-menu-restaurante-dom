@@ -33,11 +33,11 @@ cd cesde-menu-restaurante-dom
 git switch develop
 ```
 
-## Pendiente al conectar la lógica
+## Estado de la integración
 
-- Habilitar el botón submit y retirar `#estado-desarrollo` al integrar el formulario funcional; quitar también esa referencia de `aria-describedby`.
-- Los mensajes vacíos del diseño son hermanos de las listas. CSS los oculta al tener contenido. Si CRUD crea su propio mensaje vacío dentro de la lista, eliminar el aviso hermano correspondiente para no duplicarlo. Mantener los IDs de las listas.
+- La integración habilita el botón submit, retira `#estado-desarrollo` y elimina su referencia de `aria-describedby` al inicializar la aplicación.
+- Los mensajes vacíos son hermanos de las listas y CSS los oculta cuando hay contenido. El CRUD actual no inserta avisos vacíos adicionales dentro de las listas; se conservan los IDs del contrato.
 - La imagen de portada es una composición decorativa CSS con `aria-hidden`; no representa un producto real. Las fotos de platos son opcionales y no forman parte del contrato actual: nombre y precio.
-- Revisar escritorio, móvil y teclado en un navegador local. La revisión visual de esta versión queda pendiente; la herramienta no pudo acceder al archivo local.
+- La revisión visual completa en escritorio, móvil y teclado, y la matriz de pruebas manuales, siguen pendientes de ejecución y registro.
 
-La mejora visual no implementa ni modifica el CRUD o los pedidos.
+El diseño no implementa la lógica del CRUD ni de los pedidos; la integración de esas funciones está en `script.js`.
