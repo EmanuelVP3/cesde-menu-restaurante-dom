@@ -12,7 +12,7 @@ Este documento organiza el trabajo de cuatro compañeros a partir de la guía «
 4. Se trabaja por etapas y se prueba cada cambio antes de continuar. Nadie integra código que no pueda explicar.
 5. Cada entrega se propone mediante un pull request hacia `develop`; la versión probada pasa a `main`.
 
-Estado inicial: planificación y base de repositorio. Las funciones, pruebas y evidencias descritas son trabajo por realizar; este documento no afirma que la aplicación ya esté terminada ni probada.
+Estado de esta guía: define el alcance y el contrato de integración. La versión actual implementa el CRUD y los pedidos en `script.js`; la matriz completa de pruebas manuales y las evidencias siguen pendientes. Esta nota no afirma que la aplicación ya haya superado todas las pruebas.
 
 ## 2. Alcance y criterios de aceptación
 
@@ -269,5 +269,4 @@ Repaso conceptual: `parentElement` sube al padre; `closest` busca el elemento ac
 - [ ] Presentación de siete diapositivas ensayada en cinco minutos.
 - [ ] Cada integrante explica qué es traversing, cómo funciona, cuándo se aplica y líneas reales del código.
 - [ ] README indica ejecución, integrantes y estado real del proyecto; enlaces del repositorio verificados antes de compartir.
-
 

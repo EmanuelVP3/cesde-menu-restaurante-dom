@@ -1,172 +1,419 @@
 'use strict';
 
+// REGIÓN COMPAÑERO 2: validación compartida y CRUD.
 let menuData = [];
 
-// Referencias a los elementos del DOM principales
-const menuForm = document.getElementById('menu-form');
-const menuBody = document.getElementById('menu-body');
-const nombreInput = document.getElementById('nombre');
-const precioInput = document.getElementById('precio');
+const menuApp = document.getElementById('menu-app');
+const formPlato = document.getElementById('form-plato');
+const nombreInput = document.getElementById('nombre-plato');
+const precioInput = document.getElementById('precio-plato');
+const listaPlatos = document.getElementById('lista-platos');
+const listaPedido = document.getElementById('lista-pedido');
+const mensajeEl = document.getElementById('mensaje');
 
-// Generar un identificador único basado en el tiempo actual
+function mostrarMensaje(texto) {
+  if (!mensajeEl) return;
+  mensajeEl.textContent = texto;
+}
+
 function generarId() {
-    return Date.now().toString();
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-// Validar que los campos de texto y precio no estén vacíos o sean inválidos
-function validarDatos(nombre, precio) {
-    if (!nombre || nombre.trim() === '') {
-        alert('El nombre del platillo no puede estar vacío.');
-        return false;
-    }
-    if (isNaN(precio) || parseFloat(precio) <= 0) {
-        alert('El precio debe ser un número mayor a 0.');
-        return false;
-    }
-    return true;
+function formatearPrecio(precioCentavos) {
+  if (!Number.isFinite(precioCentavos)) {
+    return '$0,00';
+  }
+
+  return new Intl.NumberFormat('es-CO', {
+    style: 'currency',
+    currency: 'COP',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(precioCentavos / 100);
 }
 
-// Mantener el estado vacío coherente si no hay elementos
-function actualizarEstadoVacio() {
-    if (menuData.length === 0) {
-        menuBody.innerHTML = '';
-        const trVacio = document.createElement('tr');
-        const tdVacio = document.createElement('td');
-        tdVacio.colSpan = 3;
-        tdVacio.style.textAlign = 'center';
-        tdVacio.textContent = 'No hay platillos agregados al menú.';
-        trVacio.appendChild(tdVacio);
-        menuBody.appendChild(trVacio);
-    }
+function validarNombre(nombre) {
+  const texto = typeof nombre === 'string' ? nombre.trim() : '';
+  return texto.length > 0;
 }
 
-// R: Mostrar / Renderizar el menú completo en la tabla
-function mostrarMenu() {
-    menuBody.innerHTML = '';
-    
-    if (menuData.length === 0) {
-        actualizarEstadoVacio();
-        return;
-    }
+function validarPrecioCentavos(valor) {
+  const texto = typeof valor === 'string' ? valor.trim() : String(valor ?? '').trim();
 
-    menuData.forEach(platillo => {
-        const tr = document.createElement('tr');
-        tr.dataset.id = platillo.id; // Guardamos el ID único en el dataset de la fila
+  if (texto === '') {
+    return { valido: false, valor: 0, mensaje: 'El precio es obligatorio.' };
+  }
 
-        // Celda de nombre (Segura con textContent)
-        const tdNombre = document.createElement('td');
-        tdNombre.textContent = platillo.nombre;
+  const partes = texto.match(/^(?:\d+(?:\.\d{0,2})?|\.\d{1,2})$/);
+  if (!partes) {
+    return { valido: false, valor: 0, mensaje: 'Ingresa un precio positivo con máximo dos decimales.' };
+  }
 
-        // Celda de precio (Segura con textContent)
-        const tdPrecio = document.createElement('td');
-        tdPrecio.textContent = `$${parseFloat(platillo.precio).toFixed(2)}`;
+  const [unidadesTexto, decimalesTexto = ''] = texto.split('.');
+  const unidades = Number(unidadesTexto || 0);
+  const centavos = unidades * 100 + Number((decimalesTexto + '00').slice(0, 2));
 
-        // Celda de acciones con clases identificadoras para la delegación de eventos
-        const tdAcciones = document.createElement('td');
-        tdAcciones.innerHTML = `
-            <button class="btn btn-edit btn-accion-editar">Editar</button>
-            <button class="btn btn-delete btn-accion-eliminar">Eliminar</button>
-        `;
+  if (!Number.isSafeInteger(centavos) || centavos <= 0) {
+    return { valido: false, valor: 0, mensaje: 'El precio debe ser un número mayor que cero.' };
+  }
 
-        tr.appendChild(tdNombre);
-        tr.appendChild(tdPrecio);
-        tr.appendChild(tdAcciones);
-
-        menuBody.appendChild(tr);
-    });
+  return { valido: true, valor: centavos, mensaje: '' };
 }
 
-// C: Crear platillo mediante el formulario principal
-menuForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+function crearAcciones(tarjeta, modo) {
+  const contenedor = tarjeta.querySelector('.plato__acciones');
+  const acciones = contenedor || document.createElement('div');
+
+  acciones.className = 'plato__acciones';
+  acciones.replaceChildren();
+
+  if (modo === 'editar') {
+    const guardar = document.createElement('button');
+    guardar.type = 'button';
+    guardar.dataset.action = 'guardar';
+    guardar.textContent = 'Guardar';
+
+    const cancelar = document.createElement('button');
+    cancelar.type = 'button';
+    cancelar.dataset.action = 'cancelar';
+    cancelar.textContent = 'Cancelar';
+
+    acciones.append(guardar, cancelar);
+  } else {
+    const pedir = document.createElement('button');
+    pedir.type = 'button';
+    pedir.dataset.action = 'pedir';
+    pedir.textContent = 'Pedir';
+
+    const editar = document.createElement('button');
+    editar.type = 'button';
+    editar.dataset.action = 'editar';
+    editar.textContent = 'Editar';
+
+    const eliminar = document.createElement('button');
+    eliminar.type = 'button';
+    eliminar.dataset.action = 'eliminar';
+    eliminar.textContent = 'Eliminar';
+
+    acciones.append(pedir, editar, eliminar);
+  }
+
+  if (!contenedor) {
+    tarjeta.append(acciones);
+  }
+
+  return acciones;
+}
+
+function crearPlato(nombre, precioCentavos) {
+  if (!listaPlatos || !Number.isInteger(precioCentavos) || precioCentavos <= 0) {
+    return null;
+  }
+
+  const nombreSeguro = nombre.trim();
+  if (!validarNombre(nombreSeguro)) {
+    return null;
+  }
+
+  const tarjeta = document.createElement('article');
+  tarjeta.className = 'plato';
+  tarjeta.dataset.id = generarId();
+
+  const nombreVisible = document.createElement('p');
+  nombreVisible.className = 'plato__nombre';
+  nombreVisible.textContent = nombreSeguro;
+
+  const precioVisible = document.createElement('span');
+  precioVisible.className = 'plato__precio';
+  precioVisible.dataset.precioCentavos = String(precioCentavos);
+  precioVisible.textContent = formatearPrecio(precioCentavos);
+
+  tarjeta.append(nombreVisible, precioVisible);
+  crearAcciones(tarjeta, 'normal');
+  listaPlatos.append(tarjeta);
+
+  menuData.push({
+    id: tarjeta.dataset.id,
+    nombre: nombreSeguro,
+    precioCentavos,
+  });
+
+  mostrarMensaje('Plato agregado correctamente.');
+  return tarjeta;
+}
+
+function iniciarEdicion(tarjeta) {
+  if (!(tarjeta instanceof Element)) {
+    return false;
+  }
+
+  if (tarjeta.querySelector('.plato__editar-nombre, .plato__editar-precio')) {
+    return false;
+  }
+
+  const nombreActual = tarjeta.querySelector('.plato__nombre');
+  const precioActual = tarjeta.querySelector('.plato__precio');
+
+  if (!nombreActual || !precioActual) {
+    return false;
+  }
+
+  const nombreInputEdicion = document.createElement('input');
+  nombreInputEdicion.type = 'text';
+  nombreInputEdicion.className = 'plato__editar-nombre';
+  nombreInputEdicion.setAttribute('aria-label', 'Nombre del plato en edición');
+  nombreInputEdicion.value = nombreActual.textContent.trim();
+
+  const precioInputEdicion = document.createElement('input');
+  precioInputEdicion.type = 'number';
+  precioInputEdicion.min = '0.01';
+  precioInputEdicion.step = '0.01';
+  precioInputEdicion.className = 'plato__editar-precio';
+  precioInputEdicion.setAttribute('aria-label', 'Precio del plato en edición, en pesos colombianos');
+  precioInputEdicion.value = (Number(precioActual.dataset.precioCentavos || 0) / 100).toFixed(2);
+
+  nombreActual.replaceWith(nombreInputEdicion);
+  precioActual.replaceWith(precioInputEdicion);
+  crearAcciones(tarjeta, 'editar');
+
+  const pedirBoton = tarjeta.querySelector('[data-action="pedir"]');
+  if (pedirBoton) {
+    pedirBoton.disabled = true;
+  }
+
+  return true;
+}
+
+function guardarEdicion(tarjeta) {
+  if (!(tarjeta instanceof Element)) {
+    return false;
+  }
+
+  const nombreInputEdicion = tarjeta.querySelector('.plato__editar-nombre');
+  const precioInputEdicion = tarjeta.querySelector('.plato__editar-precio');
+
+  if (!nombreInputEdicion || !precioInputEdicion) {
+    return false;
+  }
+
+  if (!validarNombre(nombreInputEdicion.value)) {
+    mostrarMensaje('El nombre del plato no puede quedar vacío.');
+    nombreInputEdicion.focus();
+    return false;
+  }
+
+  const validacionPrecio = validarPrecioCentavos(precioInputEdicion.value);
+  if (!validacionPrecio.valido) {
+    mostrarMensaje(validacionPrecio.mensaje);
+    precioInputEdicion.focus();
+    return false;
+  }
+
+  const plato = menuData.find((item) => item.id === tarjeta.dataset.id);
+  if (!plato) {
+    return false;
+  }
+
+  plato.nombre = nombreInputEdicion.value.trim();
+  plato.precioCentavos = validacionPrecio.valor;
+
+  const nombreVisible = document.createElement('p');
+  nombreVisible.className = 'plato__nombre';
+  nombreVisible.textContent = plato.nombre;
+
+  const precioVisible = document.createElement('span');
+  precioVisible.className = 'plato__precio';
+  precioVisible.dataset.precioCentavos = String(plato.precioCentavos);
+  precioVisible.textContent = formatearPrecio(plato.precioCentavos);
+
+  nombreInputEdicion.replaceWith(nombreVisible);
+  precioInputEdicion.replaceWith(precioVisible);
+  crearAcciones(tarjeta, 'normal');
+  mostrarMensaje('Los cambios del plato se guardaron.');
+  return true;
+}
+
+function cancelarEdicion(tarjeta) {
+  if (!(tarjeta instanceof Element)) {
+    return false;
+  }
+
+  const nombreInputEdicion = tarjeta.querySelector('.plato__editar-nombre');
+  const precioInputEdicion = tarjeta.querySelector('.plato__editar-precio');
+
+  if (!nombreInputEdicion || !precioInputEdicion) {
+    return false;
+  }
+
+  const plato = menuData.find((item) => item.id === tarjeta.dataset.id);
+  const nombreVisible = document.createElement('p');
+  nombreVisible.className = 'plato__nombre';
+  nombreVisible.textContent = plato ? plato.nombre : nombreInputEdicion.value.trim();
+
+  const precioVisible = document.createElement('span');
+  precioVisible.className = 'plato__precio';
+  const precioGuardado = plato ? plato.precioCentavos : Number(precioInputEdicion.value || 0) * 100;
+  precioVisible.dataset.precioCentavos = String(precioGuardado);
+  precioVisible.textContent = formatearPrecio(precioGuardado);
+
+  nombreInputEdicion.replaceWith(nombreVisible);
+  precioInputEdicion.replaceWith(precioVisible);
+  crearAcciones(tarjeta, 'normal');
+  mostrarMensaje('La edición se canceló y se conservaron los datos anteriores.');
+  return true;
+}
+
+function eliminarPlato(tarjeta) {
+  if (!(tarjeta instanceof Element)) {
+    return false;
+  }
+
+  const id = tarjeta.dataset.id;
+  menuData = menuData.filter((plato) => plato.id !== id);
+  tarjeta.remove();
+  mostrarMensaje('El plato se eliminó del menú.');
+  return true;
+}
+
+// REGIÓN COMPAÑERO 3: pedido, único listener delegado y arranque.
+function agregarAlPedido(tarjeta) {
+  if (!(tarjeta instanceof Element)) {
+    return null;
+  }
+
+  if (!listaPedido) {
+    mostrarMensaje('No se pudo acceder a la lista del pedido.');
+    return null;
+  }
+
+  const nombreVisible = tarjeta.querySelector('.plato__nombre');
+  const precioVisible = tarjeta.querySelector('.plato__precio');
+
+  if (!nombreVisible || !precioVisible) {
+    mostrarMensaje('No se pudo agregar el plato porque faltan datos válidos.');
+    return null;
+  }
+
+  const nombre = nombreVisible.textContent.trim();
+  const precioCentavos = Number(precioVisible.dataset.precioCentavos || 0);
+
+  if (!validarNombre(nombre) || !Number.isSafeInteger(precioCentavos) || precioCentavos <= 0) {
+    mostrarMensaje('No se pudo agregar el plato porque faltan datos válidos.');
+    return null;
+  }
+
+  const linea = document.createElement('li');
+  linea.textContent = `${nombre} — ${formatearPrecio(precioCentavos)}`;
+
+  listaPedido.append(linea);
+  mostrarMensaje(`Se agregó "${nombre}" al pedido.`);
+  return linea;
+}
+
+function inicializarApp() {
+  if (!menuApp || !formPlato || !listaPlatos || !listaPedido) {
+    throw new Error('No se pudo inicializar la aplicación: faltan elementos requeridos del menú.');
+  }
+
+  if (menuApp.dataset.inicializado === 'true') {
+    return;
+  }
+
+  const botonSubmit = formPlato.querySelector('button[type="submit"]');
+  if (!botonSubmit) {
+    throw new Error('No se pudo inicializar la aplicación: falta el botón para agregar platos.');
+  }
+
+  menuApp.dataset.inicializado = 'true';
+  botonSubmit.disabled = false;
+
+  const estadoDesarrollo = document.getElementById('estado-desarrollo');
+  if (estadoDesarrollo) {
+    estadoDesarrollo.remove();
+  }
+
+  const descripcionesFormulario = (formPlato.getAttribute('aria-describedby') || '')
+    .split(/\s+/)
+    .filter((id) => id && id !== 'estado-desarrollo');
+  if (descripcionesFormulario.length) {
+    formPlato.setAttribute('aria-describedby', descripcionesFormulario.join(' '));
+  } else {
+    formPlato.removeAttribute('aria-describedby');
+  }
+
+  menuApp.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) {
+      return;
+    }
+
+    // La delegación resuelve el botón desde el elemento exacto que recibió el clic.
+    const boton = event.target.closest('button[data-action]');
+    if (!boton || !menuApp.contains(boton)) {
+      return;
+    }
+
+    // closest sube del botón a su tarjeta; se rechazan tarjetas fuera del menú.
+    const tarjeta = boton.closest('.plato');
+    if (!tarjeta || !listaPlatos.contains(tarjeta)) {
+      return;
+    }
+
+    switch (boton.dataset.action) {
+      case 'editar':
+        iniciarEdicion(tarjeta);
+        break;
+      case 'guardar':
+        guardarEdicion(tarjeta);
+        break;
+      case 'cancelar':
+        cancelarEdicion(tarjeta);
+        break;
+      case 'eliminar':
+        eliminarPlato(tarjeta);
+        break;
+      case 'pedir':
+        agregarAlPedido(tarjeta);
+        break;
+      default:
+        break;
+    }
+  });
+
+  formPlato.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (!nombreInput || !precioInput) {
+      return;
+    }
+
     const nombre = nombreInput.value;
-    const precio = precioInput.value;
+    const validacionNombre = validarNombre(nombre);
 
-    if (!validarDatos(nombre, precio)) return;
-
-    const nuevoPlatillo = {
-        id: generarId(),
-        nombre: nombre.trim(),
-        precio: parseFloat(precio)
-    };
-
-    menuData.push(nuevoPlatillo);
-    mostrarMenu();
-    menuForm.reset();
-});
-
-// ==========================================================================
-// UN SOLO ADD EVENT LISTENER EN EL CONTENEDOR (DELEGACIÓN DE EVENTOS)
-// ==========================================================================
-menuBody.addEventListener('click', (e) => {
-    const elemento = e.target;
-
-    // DOM Traversing: Navegamos desde el botón clickeado hasta su fila contenedora (tr)
-    const filaTarget = elemento.parentElement.parentElement;
-    const id = filaTarget.dataset.id;
-
-    // 1. ELIMINAR PLATILLO (D)
-    if (elemento.classList.contains('btn-accion-eliminar')) {
-        menuData = menuData.filter(item => item.id !== id);
-        mostrarMenu();
+    if (!validacionNombre) {
+      mostrarMensaje('El nombre del plato no puede quedar vacío.');
+      nombreInput.focus();
+      return;
     }
 
-    // 2. ACTIVAR MODO EDICIÓN (U - Parte 1)
-    if (elemento.classList.contains('btn-accion-editar')) {
-        const platillo = menuData.find(item => item.id === id);
-        if (!platillo) return;
-
-        // DOM Traversing usando children para acceder a las celdas de la fila
-        const tdNombre = filaTarget.children[0];
-        const tdPrecio = filaTarget.children[1];
-        const tdAcciones = filaTarget.children[2];
-
-        // Reemplazar texto por inputs seguros para editar en línea
-        tdNombre.innerHTML = '';
-        const inputNombre = document.createElement('input');
-        inputNombre.type = 'text';
-        inputNombre.value = platillo.nombre;
-        tdNombre.appendChild(inputNombre);
-
-        tdPrecio.innerHTML = '';
-        const inputPrecio = document.createElement('input');
-        inputPrecio.type = 'number';
-        inputPrecio.value = platillo.precio;
-        tdPrecio.appendChild(inputPrecio);
-
-        // Cambiar botones de acción a Guardar y Cancelar
-        tdAcciones.innerHTML = `
-            <button class="btn btn-primary btn-accion-guardar">Guardar</button>
-            <button class="btn btn-delete btn-accion-cancelar">Cancelar</button>
-        `;
+    const validacionPrecio = validarPrecioCentavos(precioInput.value);
+    if (!validacionPrecio.valido) {
+      mostrarMensaje(validacionPrecio.mensaje);
+      precioInput.focus();
+      return;
     }
 
-    // 3. GUARDAR EDICIÓN (U - Parte 2)
-    if (elemento.classList.contains('btn-accion-guardar')) {
-        // DOM Traversing con firstElementChild para capturar el valor de los inputs creados
-        const inputNombre = filaTarget.children[0].firstElementChild;
-        const inputPrecio = filaTarget.children[1].firstElementChild;
-
-        const nuevoNombre = inputNombre.value;
-        const nuevoPrecio = inputPrecio.value;
-
-        if (!validarDatos(nuevoNombre, nuevoPrecio)) return;
-
-        // Búsqueda local y actualización en el array de datos
-        const platillo = menuData.find(item => item.id === id);
-        if (platillo) {
-            platillo.nombre = nuevoNombre.trim();
-            platillo.precio = parseFloat(nuevoPrecio);
-        }
-
-        mostrarMenu();
+    const tarjetaCreada = crearPlato(nombre, validacionPrecio.valor);
+    if (
+      tarjetaCreada instanceof Element
+      && tarjetaCreada.matches('.plato[data-id]')
+      && listaPlatos.contains(tarjetaCreada)
+    ) {
+      formPlato.reset();
+    } else {
+      mostrarMensaje('No se pudo agregar el plato. Verifica los datos e inténtalo de nuevo.');
     }
+  });
+}
 
-    // 4. CANCELAR EDICIÓN (U - Parte 3: Mantiene los datos originales intactos)
-    if (elemento.classList.contains('btn-accion-cancelar')) {
-        mostrarMenu();
-    }
-});
-
-// Inicializar la vista limpia al cargar la página
-actualizarEstadoVacio();
+inicializarApp();

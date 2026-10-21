@@ -7,7 +7,7 @@ Estado: **guion por completar y ensayar**, no presentación terminada. Preparar 
 | 1. Portada | Compañero 1 | 15 s | Nombre del equipo, cuatro integrantes, Front I y Proyecto 2: Menú de restaurante. |
 | 2. El problema | Compañero 1 | 25 s | Explicar que necesitamos administrar platos y agregarlos a un pedido. Mostrar una captura real de la interfaz terminada. |
 | 3. El concepto | Compañero 2 | 45 s | Responder con palabras propias qué es traversing, cómo funciona y cuándo se aplica; mostrar un árbol del DOM de nuestro HTML. |
-| 4. Propiedades usadas | Compañero 2 | 45 s | Enseñar las líneas reales que suben con `closest` y bajan con `querySelector`, y explicar por qué actúan sobre el plato correcto. |
+| 4. Propiedades usadas | Compañero 3 | 45 s | Enseñar la delegación de clic, las líneas reales que suben con `closest` y bajan con `querySelector`, y explicar por qué actúan sobre el plato correcto. |
 | 5. Demo en vivo | Compañero 3 | 100 s | Crear, leer, editar, pedir y eliminar; demostrar un caso límite y la delegación en una tarjeta nueva. |
 | 6. Cómo usamos la IA | Compañero 4 | 40 s | Mostrar tres prompts usados y el error real corregido por el equipo, con las capturas registradas. |
 | 7. Aprendizajes | Compañero 4 | 30 s | Contar una dificultad real, cómo la resolvimos y qué mejoraríamos. |
@@ -42,11 +42,11 @@ La diapositiva final debe mostrar el código que efectivamente quedó integrado.
 
 | Concepto | Archivo y línea real | Explicación propia |
 |---|---|---|
-| Delegación: un listener de clic en el contenedor | `script.js`, pendiente | Por completar |
-| Encontrar el botón incluso al pulsar su hijo | `script.js`, pendiente | Por completar |
-| Subir a la tarjeta con `closest('.plato')` | `script.js`, pendiente | Por completar |
-| Buscar nombre y precio dentro de la tarjeta con `querySelector` | `script.js`, pendiente | Por completar |
-| Mostrar texto del usuario con `textContent` | `script.js`, pendiente | Por completar |
+| Delegación: un listener de clic en el contenedor | `script.js:345` | Un único listener atiende las acciones de las tarjetas creadas ahora o después. |
+| Encontrar el botón incluso al pulsar su hijo | `script.js:351` | `closest` localiza el botón desde el elemento que recibió el clic. |
+| Subir a la tarjeta con `closest('.plato')` | `script.js:357` | La acción queda limitada a la tarjeta del botón pulsado. |
+| Buscar nombre y precio dentro de la tarjeta con `querySelector` | `script.js:290-291` | Las búsquedas parten de la tarjeta, no del documento completo. |
+| Mostrar texto del usuario con `textContent` | `script.js:125` | El nombre se trata como texto, no como HTML. |
 
 ## 5. Recorrido de la demo
 
