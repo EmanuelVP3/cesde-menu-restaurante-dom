@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>La Mesa | Menú de restaurante</title>
   <link rel="stylesheet" href="style.css">
+  <!-- defer ejecuta la lógica después de leer el HTML, para que los elementos ya existan. -->
   <script src="script.js" defer></script>
 </head>
 <body>
+  <!-- Contenedor estable del único listener delegado de clics. -->
   <main id="menu-app">
     <header class="cabecera">
       <a class="marca" href="#titulo-menu"><span aria-hidden="true">M.</span> LA MESA</a>
@@ -48,6 +50,7 @@
       </form>
       <p id="estado-desarrollo" class="nota-desarrollo">Diseño listo. Agregar platos se habilitará al integrar la lógica del menú.</p>
     </section>
+    <!-- Región de avisos: JavaScript escribe aquí y aria-live anuncia los cambios. -->
     <p id="mensaje" role="status" aria-live="polite" aria-atomic="true"></p>
     <div class="contenido">
       <section class="menu-seccion" aria-labelledby="titulo-menu">
@@ -63,6 +66,7 @@
         <p class="antetitulo">03 / TUS FAVORITOS</p>
         <h2 id="titulo-pedido">Tu pedido</h2>
         <p class="pedido-descripcion">Una buena elección empieza por un buen plato.</p>
+        <!-- Cada clic en Pedir agrega un li con una copia del nombre y precio. -->
         <ul id="lista-pedido"></ul>
         <p class="estado-vacio estado-vacio--pedido">Todavía no hay antojos.<span>Elige Pedir en un plato para agregarlo.</span></p>
         <p class="pedido-nota">Cada elección se agrega por separado.</p>

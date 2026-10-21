@@ -1,5 +1,7 @@
 /* Diseño compartido sin fuentes ni librerías externas. */
+/* Variables: un cambio aquí actualiza los colores de toda la interfaz. */
 :root { color-scheme: light; --fondo:#f4efe6; --papel:#fffcf6; --tinta:#233b30; --secundario:#626353; --borde:#d7cebd; }
+/* border-box incluye borde y relleno dentro del ancho declarado. */
 * { box-sizing:border-box; }
 body { margin:0; background:var(--fondo); color:var(--tinta); font-family:system-ui,sans-serif; line-height:1.6; }
 main { max-width:1180px; margin-inline:auto; padding:0 40px; }
@@ -16,6 +18,7 @@ h2 { margin:0; font-size:1.9rem; line-height:1.2; letter-spacing:-.025em; }
 .panel { background:var(--papel); border:1px solid var(--borde); border-radius:4px; padding:28px; }
 .seccion-cabecera { display:flex; justify-content:space-between; align-items:end; gap:20px; margin-bottom:24px; }
 .seccion-cabecera > p,.detalle { margin:0; color:var(--secundario); font-size:.8rem; }
+/* Grid organiza campos y botón en columnas; las reglas de móvil los apilan. */
 #form-plato { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) auto; align-items:start; gap:16px; }
 .campo { min-width:0; display:grid; gap:7px; }
 label { font-size:.8rem; font-weight:650; }
@@ -31,10 +34,12 @@ button:hover:not(:disabled) { background:#c9e6a0; }
 .boton-principal:hover:not(:disabled) { background:#354e3b; }
 .boton-principal span { margin-left:16px; }
 button:disabled { cursor:not-allowed; background:#e3e7db; color:#596357; border-color:#b8c0b0; }
+/* El contorno indica dónde está el teclado al recorrer los controles con Tab. */
 :focus-visible { outline:3px solid #285eab; outline-offset:4px; }
 #mensaje { overflow-wrap:anywhere; }
 #mensaje:empty { margin:0; }
 #mensaje:not(:empty) { padding:12px 16px; border-left:3px solid var(--tinta); background:#e9efde; }
+/* Menú y pedido comparten fila en escritorio y una columna en pantallas estrechas. */
 .contenido { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(0,1fr); gap:30px; padding-block:40px 60px; align-items:start; }
 .menu-seccion { min-width:0; }
 #lista-platos { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
@@ -59,6 +64,7 @@ button:disabled { cursor:not-allowed; background:#e3e7db; color:#596357; border-
 #lista-platos:not(:empty) + .estado-vacio--menu,#lista-pedido:not(:empty) + .estado-vacio--pedido { display:none; }
 footer { border-top:1px solid var(--borde); padding-block:20px 30px; display:flex; justify-content:space-between; gap:16px; font-size:.7rem; font-weight:700; letter-spacing:.1em; }
 footer span { font-weight:400; letter-spacing:normal; }
+/* Una media query aplica estas reglas solo al alcanzar el ancho indicado. */
 @media (max-width:850px) {
   main { padding-inline:24px; }
   #form-plato { grid-template-columns:1fr 1fr; }
