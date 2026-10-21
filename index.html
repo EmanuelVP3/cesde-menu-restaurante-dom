@@ -3,31 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Menú de restaurante</title>
+  <title>La Mesa | Menú de restaurante</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
 </head>
 <body>
   <main id="menu-app">
-    <h1>Menú de restaurante</h1>
-    <p>Base pendiente de implementar por el equipo.</p>
-    <!-- Compañero 1: conservar estos identificadores al completar el diseño. -->
-    <form id="form-plato">
-      <label for="nombre-plato">Nombre del plato</label>
-      <input id="nombre-plato" name="nombre" required>
-      <label for="precio-plato">Precio</label>
-      <input id="precio-plato" name="precio" type="number" min="0.01" step="0.01" required>
-      <button type="submit" disabled>Agregar (pendiente)</button>
-    </form>
-    <p id="mensaje" role="status" aria-live="polite"></p>
-    <section aria-labelledby="titulo-menu">
-      <h2 id="titulo-menu">Platos</h2>
-      <div id="lista-platos"></div>
+    <header class="cabecera">
+      <a class="marca" href="#titulo-menu"><span aria-hidden="true">M.</span> LA MESA</a>
+      <span class="etiqueta">Hecho para compartir</span>
+    </header>
+    <div class="portada">
+    <div class="introduccion">
+      <p class="antetitulo">COCINA CON HISTORIA</p>
+      <h1>El arte de<br>sentarse <em>a la mesa.</em></h1>
+      <p>Sabores que reúnen. Momentos que se quedan.<br>Crea tu carta y descubre tu próxima buena elección.</p>
+      <a class="enlace-carta" href="#titulo-menu">Explorar la carta <span aria-hidden="true">↓</span></a>
+    </div>
+    <!-- Composición decorativa en CSS: no representa un plato del menú. -->
+    <div class="portada-arte" aria-hidden="true">
+      <div class="sello">LA MESA <span>COCINA & ENCUENTROS</span></div>
+      <div class="plato-decorativo"><div class="plato-decorativo__centro"><span class="hoja hoja--uno"></span><span class="hoja hoja--dos"></span><span class="hoja hoja--tres"></span><span class="tomate tomate--uno"></span><span class="tomate tomate--dos"></span><span class="tomate tomate--tres"></span></div></div>
+      <span class="arte-nota">Una pausa. Un sabor. Un encuentro.</span>
+    </div>
+    </div>
+    <section class="panel" aria-labelledby="titulo-formulario">
+      <div class="seccion-cabecera">
+        <div><p class="antetitulo">01 / TU CARTA</p><h2 id="titulo-formulario">Un nuevo sabor</h2></div>
+        <p>Agrega un plato al menú.</p>
+      </div>
+      <!-- Estos identificadores son el contrato con el CRUD. -->
+      <form id="form-plato" aria-describedby="ayuda-formulario estado-desarrollo">
+        <div class="campo">
+          <label for="nombre-plato">Nombre del plato *</label>
+          <input id="nombre-plato" name="nombre" placeholder="Ej. Pasta de la casa" required>
+        </div>
+        <div class="campo">
+          <label for="precio-plato">Precio en COP *</label>
+          <input id="precio-plato" name="precio" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Ej. 18500" required aria-describedby="ayuda-precio">
+          <small id="ayuda-precio">Mayor que cero, hasta dos decimales.</small>
+        </div>
+        <button class="boton-principal" type="submit" disabled>Agregar plato <span aria-hidden="true">↗</span></button>
+        <p id="ayuda-formulario" class="ayuda-formulario">Los campos con * son obligatorios.</p>
+      </form>
+      <p id="estado-desarrollo" class="nota-desarrollo">Diseño listo. Agregar platos se habilitará al integrar la lógica del menú.</p>
     </section>
-    <section aria-labelledby="titulo-pedido">
-      <h2 id="titulo-pedido">Pedido</h2>
-      <ul id="lista-pedido"></ul>
-    </section>
+    <p id="mensaje" role="status" aria-live="polite" aria-atomic="true"></p>
+    <div class="contenido">
+      <section class="menu-seccion" aria-labelledby="titulo-menu">
+        <div class="seccion-cabecera">
+          <div><p class="antetitulo">02 / PARA ELEGIR</p><h2 id="titulo-menu">Nuestro menú</h2></div>
+          <span class="detalle">Fresco y a tu gusto</span>
+        </div>
+        <!-- Sin platos ficticios: JavaScript creará las tarjetas .plato. -->
+        <div id="lista-platos"></div>
+        <p class="estado-vacio estado-vacio--menu">La carta está por comenzar.<span>Los platos que agregues aparecerán aquí.</span></p>
+      </section>
+      <section class="panel pedido-seccion" aria-labelledby="titulo-pedido">
+        <p class="antetitulo">03 / TUS FAVORITOS</p>
+        <h2 id="titulo-pedido">Tu pedido</h2>
+        <p class="pedido-descripcion">Una buena elección empieza por un buen plato.</p>
+        <ul id="lista-pedido"></ul>
+        <p class="estado-vacio estado-vacio--pedido">Todavía no hay antojos.<span>Elige Pedir en un plato para agregarlo.</span></p>
+        <p class="pedido-nota">Cada elección se agrega por separado.</p>
+      </section>
+    </div>
+    <footer>LA MESA <span>Un menú para crear juntos.</span></footer>
   </main>
 </body>
 </html>
