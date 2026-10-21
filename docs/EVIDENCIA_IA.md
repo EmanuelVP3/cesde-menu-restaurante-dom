@@ -1,65 +1,59 @@
-# Evidencia del uso de IA
+# Evidencia real de uso de IA
 
-Estado: **plantilla pendiente de completar con evidencia real**.
+Registro del 20 de octubre de 2026. Responsable de esta conversación: Emanuel. Herramienta: Codex. Los textos siguientes sí fueron utilizados en esta conversación; las capturas todavía deben tomarse de la conversación original. Este registro escrito no sustituye las capturas exigidas por la guía.
 
-La guía solicita capturas de tres prompts utilizados y de un error de la IA que el equipo haya corregido. No inventar conversaciones, errores, capturas ni resultados. Los prompts propuestos en `PROMPT_GENERAL.md` son ayudas de trabajo; solo se convierten en evidencia al usarlos y registrar lo que ocurrió.
+## Prompt 1 — Construcción de la parte de Emanuel
 
-## Cómo guardar la evidencia
+> yo debo de realizar el punto 1 ayudame realizandolo
 
-1. Usar la IA primero para entender, después para construir por etapas y finalmente para revisar.
-2. Guardar capturas legibles en `docs/evidencias/`, con nombres como `prompt-01-entender.png`, `prompt-02-construir.png`, `prompt-03-revisar.png` y `error-corregido.png`.
-3. Mostrar el prompt y la parte relevante de la respuesta. Ocultar datos personales, credenciales y conversaciones ajenas al proyecto.
-4. Registrar qué verificó el equipo por su cuenta. Cada integrante debe entender y poder explicar el código que entrega.
-5. Añadir enlaces relativos a las capturas solo cuando los archivos existan.
+Contexto: la parte 1 correspondía a HTML, CSS y accesibilidad. La IA preparó la estructura y los estilos conservando los selectores del contrato. Referencia comprobable: commit `d2c4f53`; mejora posterior `aa9d5fd`.
 
-## Prompt 1 — Entender DOM Traversing
+Captura pendiente: `docs/evidencias/prompt-01-construccion.png`. Capturar el mensaje real y la respuesta relevante. No se enlaza una imagen inexistente.
 
-- Fecha y responsable: **por completar**.
-- Herramienta de IA utilizada: **por completar**.
-- Prompt exacto enviado: **pegar aquí el texto real**.
-- Qué respondió: **resumir con palabras propias**.
-- Qué entendimos y cómo lo comprobamos: **por completar**.
-- Archivo de captura real: **por completar**.
+## Prompt 2 — Revisión del trabajo integrado
 
-## Prompt 2 — Construir una etapa
+> puedes hacer pull en develop y revisar los cambios del compañero
 
-- Fecha y responsable: **por completar**.
-- Herramienta de IA utilizada: **por completar**.
-- Etapa concreta: **HTML/CSS, CRUD o Pedir/delegación**.
-- Prompt exacto enviado: **pegar aquí el texto real**.
-- Código que aceptamos o ajustamos: **indicar archivo y función**.
-- Prueba ejecutada y resultado real: **por completar**.
-- Archivo de captura real: **por completar**.
+La revisión encontró selectores incompatibles con el HTML, estructura de tabla diferente del contrato y validación incompleta. Los ajustes del CRUD quedaron en `56c2b5a`; la corrección posterior de pedido y precios quedó en `42723a8`. Esta secuencia consta en el historial Git.
 
-## Prompt 3 — Revisar o explicar
+Captura pendiente: `docs/evidencias/prompt-02-revision.png`.
 
-- Fecha y responsable: **por completar**.
-- Herramienta de IA utilizada: **por completar**.
-- Prompt exacto enviado: **pegar aquí el texto real**.
-- Observación de la IA y decisión del equipo: **por completar**.
-- Verificación independiente y resultado: **por completar**.
-- Archivo de captura real: **por completar**.
+## Prompt 3 — Comprensión para exponer
 
-## Error real de la IA corregido por el equipo
+> sabes y me gustaria que agregaras en las lineas del codigo comentarios para entender ahora al momento de explicarle al profesor
 
-Si todavía no se ha identificado uno, mantener este apartado como pendiente. Una sugerencia rechazada solo cuenta como error si el equipo explica y demuestra el problema real.
+La IA agregó comentarios sobre estado, centavos, CRUD, textContent, closest, querySelector y delegación. Cada estudiante debe leerlos, probar el código y explicar con sus palabras lo que entendió; tener comentarios no acredita por sí solo comprensión.
 
-- Fecha, herramienta y responsable: **por completar**.
-- Fragmento de respuesta o código incorrecto: **pegar el fragmento real**.
-- Qué esperábamos: **por completar**.
-- Qué ocurrió al revisarlo o ejecutarlo: **por completar**.
-- Causa explicada con nuestras palabras: **por completar**.
-- Corrección realizada: **indicar archivo, función y cambio**.
-- Prueba que demuestra la corrección: **por completar**.
-- Captura del error y de la corrección: **por completar**.
+Captura pendiente: `docs/evidencias/prompt-03-explicacion.png`.
 
-## Comprensión individual
+## Error técnico corregido y atribución pendiente
 
-| Integrante | Línea o función que explicará | Explicación con sus palabras | Estado |
-|---|---|---|---|
-| Compañero 1 | Por escoger | Por completar | Pendiente |
-| Compañero 2 | Por escoger | Por completar | Pendiente |
-| Compañero 3 | Por escoger | Por completar | Pendiente |
-| Compañero 4 | Por escoger | Por completar | Pendiente |
+Problema real encontrado en `56c2b5a`:
 
-La autoría de los commits y las ramas corresponde al equipo. Esta evidencia registra el apoyo de la IA solicitado por la actividad académica.
+```js
+if (!Number.isInteger(numero * 100)) {
+  // Rechazaba importes válidos como 0.29 y 1.10.
+}
+```
+
+La precisión binaria de JavaScript hace que algunos productos no sean enteros exactos. La corrección en `42723a8` valida el texto decimal, separa pesos y decimales y comprueba que el resultado en centavos sea un entero seguro. La revisión de esta sesión verificó los dos valores y ocho casos adicionales: ver `evidencias/revision-tecnica.json`.
+
+**No está confirmado que este fragmento lo haya generado una IA.** Para cumplir la evidencia de «error de IA corregido», el compañero debe aportar su conversación original que lo demuestre, más una captura del error y la corrección. Mientras tanto, esta evidencia queda pendiente; no atribuirle a la IA código sin comprobar su origen.
+
+## Archivos a reunir en evidencias/
+
+- Tres capturas reales de los prompts anteriores y respuestas relevantes.
+- Captura de un error de IA con origen confirmado y su corrección.
+- Captura de la interfaz y del recorrido CRUD/pedido.
+- Resultados de pruebas manuales con responsable y fecha.
+
+Ocultar información ajena al proyecto en las capturas. No recrear conversaciones como si fueran capturas originales.
+
+## Comprensión individual por completar
+
+| Integrante | Tema para explicar | Estado |
+| --- | --- | --- |
+| Emanuel | HTML, CSS, labels, defer y diseño adaptable | Ensayo pendiente |
+| Compañero CRUD | Crear, editar, cancelar y eliminar una tarjeta | Nombre y ensayo pendientes |
+| Compañero integración | closest, querySelector, delegación y copia del pedido | Nombre y ensayo pendientes |
+| Compañero revisión | Pruebas, evidencia real y presentación | Nombre y ensayo pendientes |

@@ -1,0 +1,148 @@
+{
+  "fecha": "2026-10-20",
+  "commit": "92abd4183ef38f0c0718c3c4a5d02c5c697f1330",
+  "alcance": "Validación real de funciones con Node y revisión estática. No es prueba de navegador.",
+  "precios": [
+    {
+      "input": "0.29",
+      "expectedCentavos": 29,
+      "actual": {
+        "valido": true,
+        "valor": 29,
+        "mensaje": ""
+      },
+      "passed": true
+    },
+    {
+      "input": "1.10",
+      "expectedCentavos": 110,
+      "actual": {
+        "valido": true,
+        "valor": 110,
+        "mensaje": ""
+      },
+      "passed": true
+    },
+    {
+      "input": "12500.50",
+      "expectedCentavos": 1250050,
+      "actual": {
+        "valido": true,
+        "valor": 1250050,
+        "mensaje": ""
+      },
+      "passed": true
+    },
+    {
+      "input": "",
+      "expectedCentavos": null,
+      "actual": {
+        "valido": false,
+        "valor": 0,
+        "mensaje": "El precio es obligatorio."
+      },
+      "passed": true
+    },
+    {
+      "input": " ",
+      "expectedCentavos": null,
+      "actual": {
+        "valido": false,
+        "valor": 0,
+        "mensaje": "El precio es obligatorio."
+      },
+      "passed": true
+    },
+    {
+      "input": "0",
+      "expectedCentavos": null,
+      "actual": {
+        "valido": false,
+        "valor": 0,
+        "mensaje": "El precio debe ser un número mayor que cero."
+      },
+      "passed": true
+    },
+    {
+      "input": "-1",
+      "expectedCentavos": null,
+      "actual": {
+        "valido": false,
+        "valor": 0,
+        "mensaje": "Ingresa un precio positivo con máximo dos decimales."
+      },
+      "passed": true
+    },
+    {
+      "input": "Infinity",
+      "expectedCentavos": null,
+      "actual": {
+        "valido": false,
+        "valor": 0,
+        "mensaje": "Ingresa un precio positivo con máximo dos decimales."
+      },
+      "passed": true
+    },
+    {
+      "input": "1.234",
+      "expectedCentavos": null,
+      "actual": {
+        "valido": false,
+        "valor": 0,
+        "mensaje": "Ingresa un precio positivo con máximo dos decimales."
+      },
+      "passed": true
+    },
+    {
+      "input": "100000000000000",
+      "expectedCentavos": null,
+      "actual": {
+        "valido": false,
+        "valor": 0,
+        "mensaje": "El precio debe ser un número mayor que cero."
+      },
+      "passed": true
+    }
+  ],
+  "referenciasDOM": [
+    {
+      "id": "menu-app",
+      "existe": true
+    },
+    {
+      "id": "form-plato",
+      "existe": true
+    },
+    {
+      "id": "nombre-plato",
+      "existe": true
+    },
+    {
+      "id": "precio-plato",
+      "existe": true
+    },
+    {
+      "id": "lista-platos",
+      "existe": true
+    },
+    {
+      "id": "lista-pedido",
+      "existe": true
+    },
+    {
+      "id": "mensaje",
+      "existe": true
+    },
+    {
+      "id": "estado-desarrollo",
+      "existe": true
+    }
+  ],
+  "listenersClick": 1,
+  "listenersSubmit": 1,
+  "pendiente": [
+    "Recorrido completo en navegador",
+    "Teclado y móvil",
+    "Capturas reales de conversaciones y demo"
+  ]
+}
